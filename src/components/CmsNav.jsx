@@ -1,31 +1,56 @@
-import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap"
+import { Container, Nav, NavDropdown, Navbar, Button  } from "react-bootstrap"
 import { Link, NavLink } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { clearUser } from "../store"
+import { clearStorage } from "../lib"
+
 
 export const CmsNav = () => {
     const user = useSelector(state => state.user.value)
 
+    const dispatch = useDispatch()
+
+    const handleLogout = () =>{
+        clearStorage('130cmstoken')
+        dispatch(clearUser())
+    }
+
+
     return Object.keys(user).length ? <Navbar variant="dark" bg="dark" expand="lg">
-            <Container>
-                <Link to="/" className="navbar-brand">Travels</Link>
-                <Navbar.Toggle />
-                <Navbar.Collapse>
-                    <Nav className="me-auto">
-                        <Nav.Item>
-                            <NavLink to="/staffs" className="nav-link">
-                                <i className="fa-solid fa-users me-2"></i>Staffs
-                            </NavLink>
-                        </Nav.Item>
-                    </Nav>
-                    <Nav className="mb-2 mb-lg-0">
-                        <NavDropdown title={<><i className="fa-solid fa-users-circle me-2"></i>Demo user</>}>
-                            <Link className="dropdown-item">
-                                <i className="fa-solid fa-user-edit me-2"></i>Edit Profile
-                            </Link>
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-     </Navbar>: null
-    
+        <Container>
+            <Link to="/" className="navbar-brand">Travels</Link>
+            <Navbar.Toggle />
+            <Navbar.Collapse>
+                <Nav className="me-auto">
+                    {user.type == 'Admin' ? <Nav.Item>
+                        <NavLink to="/staffs" className="nav-link">
+                            <i className="fa-solid fa-users me-2"></i>Staffs
+                        </NavLink>
+                    </Nav.Item> : null}
+                </Nav>
+                <Nav className="mb-2 mb-lg-0">
+                    <NavDropdown title={<><i className="fa-solid fa-user me-2"></i>{user.name}</>}>
+                        <Link to="/edit-profile" className="dropdown-item">
+                            <i className="fa-solid fa-user-edit me-2">
+                            </i>
+                            Edit profile
+                        </Link>
+                        <Link to="/changepassword" className="dropdown-item">
+                            <i className="fa-solid fa-asterisk me-2">
+                            </i>
+                            ChangePassword
+                        </Link>
+                        <NavDropdown.Divider />
+                        <Button className="btn btn-link dropdown-item rounded-0" type="button" onClick={handleLogout}>
+                            <i className="fa-solid fa-sign-out-alt me-2">
+                            </i>
+                            Logout
+                        </Button>
+
+                    </NavDropdown>
+                </Nav>
+            </Navbar.Collapse>
+        </Container>
+    </Navbar> : null
+
 }

@@ -1,19 +1,30 @@
 import { Button, Col, Form, Row } from "react-bootstrap"
 import { FormItem, SubmitBtn } from "../../components"
 import { useState } from "react"
+import {inStorage, setInForm} from "../../lib"
 import http from "../../http"
+import { useDispatch } from "react-redux"
+import { setUser } from "../../store"
+import { useNavigate } from "react-router-dom"
 
 export const Login = () => {
     const [form, setForm] = useState({})
     const [remember, setRemember] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const handleSubmit = ev => {
         ev.preventDefault()
         setLoading(true)
 
         http.post('login', form)
-            .then(resp => { })
+            .then(({data}) => {
+                dispatch(setUser(data.user))
+                inStorage('130cmstoken', data.token, remember)
+                navigate('/')
+            })
             .catch(err => { })
             .finally(() => setLoading(false))
     }
