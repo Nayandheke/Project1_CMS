@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import { FormItem, Loading, SubmitBtn } from "../../components";
+import { FormItem, SubmitBtn } from "../../components";
 import { setInForm } from "../../lib";
 import http from "../../http";
 import { setUser } from "../../store";
@@ -17,8 +17,8 @@ export const Create = () => {
         ev.preventDefault()
         setLoading(true)
 
-        http.post('cms/staffs', form)
-            .then(() => navigate('/staffs'))
+        http.post('cms/customers', form)
+            .then(() => navigate('/customers'))
             .then(({data}) => {
                 dispatch(setUser(data))
             })
@@ -30,7 +30,7 @@ export const Create = () => {
         <Col xs={12} className="bg-white my-3 py-3 rounded-3 shadow-sm">
             <Row>
                 <Col sm={6} className="mx-auto">
-                    <h1>Add Staff</h1>
+                    <h1>Add Customers</h1>
                 </Col>
             </Row>
             <Row>
@@ -69,6 +69,7 @@ export const Create = () => {
                     </FormItem>
                     <div className="mb-3">
                         <SubmitBtn loading={loading}/>
+
                     </div>
                 </Form>
                 </Col>

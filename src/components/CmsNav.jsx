@@ -1,22 +1,25 @@
-import { Container, Nav, NavDropdown, Navbar, Button  } from "react-bootstrap"
+import { Container, Nav, NavDropdown, Navbar, Button } from "react-bootstrap"
 import { Link, NavLink } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { clearUser } from "../store"
 import { clearStorage } from "../lib"
+import React, { useRef } from 'react'
+import LoadingBar from 'react-top-loading-bar'
 
 
 export const CmsNav = () => {
     const user = useSelector(state => state.user.value)
 
     const dispatch = useDispatch()
+    const ref = useRef(null)
 
-    const handleLogout = () =>{
+    const handleLogout = () => {
         clearStorage('130cmstoken')
         dispatch(clearUser())
     }
 
 
-    return Object.keys(user).length ? <Navbar variant="dark" bg="dark" expand="lg">
+    return <> Object.keys(user).length ? <Navbar variant="dark" bg="dark" expand="lg">
         <Container>
             <Link to="/" className="navbar-brand">Travels</Link>
             <Navbar.Toggle />
@@ -27,6 +30,26 @@ export const CmsNav = () => {
                             <i className="fa-solid fa-users me-2"></i>Staffs
                         </NavLink>
                     </Nav.Item> : null}
+                    <Nav.Item>
+                        <NavLink to="/customers" className="nav-link">
+                            <i className="fa-solid fa-user me-2"></i>Customers
+                        </NavLink>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <NavLink to="/categories" className="nav-link">
+                            <i className="fa-solid fa-th-large me-2"></i>Categories
+                        </NavLink>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <NavLink to="/choices" className="nav-link">
+                            <i className="fa-solid fa-earth me-2"></i>Choices
+                        </NavLink>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <NavLink to="/places" className="nav-link">
+                            <i className="fa-solid fa-gift me-2"></i>Places
+                        </NavLink>
+                    </Nav.Item>
                 </Nav>
                 <Nav className="mb-2 mb-lg-0">
                     <NavDropdown title={<><i className="fa-solid fa-user me-2"></i>{user.name}</>}>
@@ -51,6 +74,8 @@ export const CmsNav = () => {
                 </Nav>
             </Navbar.Collapse>
         </Container>
-    </Navbar> : null
+    </Navbar>   : null
 
+
+    </>
 }

@@ -49,7 +49,6 @@ export const Password = () => {
 
                     <div className="mb-3">
                         <SubmitBtn loading={loading}/>
-
                     </div>
                 </Form>
                 </Col>

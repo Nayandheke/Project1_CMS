@@ -27,7 +27,13 @@ http.interceptors.response.use(resp=> {
     return resp
 }, err => {
     if('response' in err && 'error' in err.response.data) {
-        toast.error(err.response.data.error)
+        if(typeof err.response.data.error == 'string'){
+            toast.error(err.response.data.error) 
+        } else {
+            for(let k in err.response.data.error) {
+                toast.error(err.response.data.error[k])
+            }
+        }
     }
     return Promise.reject(err)
 })

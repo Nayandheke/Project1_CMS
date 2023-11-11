@@ -1,27 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { FormItem, Loading, SubmitBtn } from "../../components";
 import { setInForm } from "../../lib";
 import http from "../../http";
-import { setUser } from "../../store";
 import Switch from "react-switch"
-import {  useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const Create = () => {
+export const Edit = () => {
     const [form, setForm] = useState({})
+    const [staff, setStaff] = useState({})
     const [loading, setLoading] = useState(false)
+    const [loadingPage, setLoadingPage] = useState(false)
 
     const navigate = useNavigate()
+    const params = useParams()
+
+    useEffect(() => {
+        setLoadingPage(true)
+        http.get(`cms/staffs/${params.id}`)
+            .then(({data}) => setStaff(data))
+            .catch(err => {})
+            .finally(() => setLoadingPage(false))
+    }, [params.is])
+
+    useEffect(() => {
+        if(Object.keys(staff).length){
+            setForm({
+                name: staff.name,
+                phone: staff.phone,
+                address: staff.address,
+                status: staff.status,
+            })
+        }
+    }, [staff])
     
     const handleSubmit = ev => {
         ev.preventDefault()
         setLoading(true)
 
-        http.post('cms/staffs', form)
+        http.patch(`cms/staffs/${params.id}`, form)
             .then(() => navigate('/staffs'))
-            .then(({data}) => {
-                dispatch(setUser(data))
-            })
             .catch(err => {})
             .finally(() => setLoading(false))
     }
@@ -30,28 +48,15 @@ export const Create = () => {
         <Col xs={12} className="bg-white my-3 py-3 rounded-3 shadow-sm">
             <Row>
                 <Col sm={6} className="mx-auto">
-                    <h1>Add Staff</h1>
+                    <h1>Edit Staff</h1>
                 </Col>
             </Row>
             <Row>
                 <Col sm={6} className="mx-auto">
-                <Form onSubmit={handleSubmit}>
+                {loadingPage ? <Loading/> : <Form onSubmit={handleSubmit}>
                     <FormItem title="Name" label="Name">
                         <Form.Control type="text" name="name" id="name" defaultValue={form.name} onChange={ev => setInForm (ev, form, setForm)} />
                     </FormItem>
-
-                    <FormItem title="Email" label="email">
-                        <Form.Control type="email" name="email" id="email" defaultValue={form.email} onChange={ev => setInForm (ev, form, setForm)} />
-                    </FormItem>
-
-                    <FormItem title="New Password" label="password">
-                        <Form.Control type="password" name="password" id="password" onChange={ev => setInForm (ev, form, setForm)} />
-                    </FormItem>
-
-                    <FormItem title="Confirm Password" label="confirm_password">
-                        <Form.Control type="password" name="confirm_password" id="confirm_password" onChange={ev => setInForm (ev, form, setForm)} />
-                    </FormItem>
-
 
                     <FormItem title="Phone" label="Phone">
                         <Form.Control type="text" name="phone" id="phone" defaultValue={form.phone} onChange={ev => setInForm (ev, form, setForm)} />
@@ -70,7 +75,7 @@ export const Create = () => {
                     <div className="mb-3">
                         <SubmitBtn loading={loading}/>
                     </div>
-                </Form>
+                </Form>}
                 </Col>
             </Row>
         </Col>
