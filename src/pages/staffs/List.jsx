@@ -7,14 +7,14 @@ import moment from "moment"
 import {confirmAlert} from "react-confirm-alert"
 import { toast } from "react-toastify";
 
-
 export const List = () => {
     const [staffs, setStaffs] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setLoading(true);
-        http.get("cms/staffs")
+        http
+            .get("cms/staffs")
             .then(({ data }) => setStaffs(data))
             .catch((err) => { })
             .finally(() => setLoading(false));
@@ -47,6 +47,34 @@ export const List = () => {
         });
     }
 
+    const handleGenerate = () => {
+        setLoading(true)
+        generateData()
+            .then(() => http.get('cms/staffs'))
+            .then(({data}) => setStaffs(data))
+            .catch(err => {})
+            .finally(() => setLoading(false))
+    }
+
+    const generateData = async () => new Promise(async (resolve, reject) => {
+        try {
+            for(let i = 1; i <= 20; i++){
+                console.log("gen")
+                let data = {
+                    name: `Staff ${i}`,
+                    email: `Staff@${i}email.com`,
+                    password: `Password#123`,
+                    confirm_password: `Password#123`,
+                    phone: `9841234567`,
+                    address: `Location ${i}`,
+                    status: true,
+                }
+                await http.post('cms/staffs', data)
+            }
+        } catch (error) {
+        }
+    })
+
     return (
         <Col xs={12} className="bg-white my-3 py-3 rounded-3 shadow-sm">
             <Row>
@@ -58,8 +86,13 @@ export const List = () => {
                         <i className="fa-solid fa-plus me-2"></i>Add Staffs
                     </Link>
                 </Col>
+                <Col xs="auto">
+                    <Button variant="dark" onClick={handleGenerate}>
+                        <i className="fa-solid fa-plus-circle me-2"></i>Generate
+                    </Button>
+                </Col>
             </Row>
-            {loading ? <Loading /> : <DataTable data={staffs.map(staff => {
+            {loading ? <Loading /> : <DataTable sortable={['Name','Email','Phone','Address','Status','Created At','Updated At']} searchable={['Name','Email']} data={staffs.map(staff => {
                 return {
                     'Name' : staff.name,
                     'Email': staff.email,
