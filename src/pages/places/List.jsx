@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import moment from "moment"
 import {confirmAlert} from "react-confirm-alert"
 import { toast } from "react-toastify";
+import { imgUrl } from "../../lib";
 
 export const List = () => {
     const [places, setPlaces] = useState([]);
@@ -59,15 +60,20 @@ export const List = () => {
                     </Link>
                 </Col>
             </Row>
-            {loading ? <Loading /> : <DataTable sortable={['Name',,'Status','Created At','Updated At']} searchable={['Name','Status','Created At','Updated At']} data={places.map(staff => {
+            {loading ? <Loading /> : <DataTable sortable={['Name','Category','Choice','Price','Dis. Price','Status','Created At', 'Updated At']} searchable={['Name' ,'Status','Created At', 'Updated At']} data={places.map(place => {
                 return {
-                    'Name' : staff.name,
-                   
-                    'Status' : staff.status ? 'Active' : 'Inactive',
-                    'Created At': moment(staff.createdAt).format('lll'),
-                    'Updated At': moment(staff.updatedAt).format('lll'),
+                    'Name' : place.name,
+                    'Image': <img src={imgUrl(place.images[0])} className="img-sm" />,
+                    'Category': place.category.name,
+                    'Choice': place.choice.name,
+                    'Price': place.price,
+                    'Dis. Price': place.discounted_price || 0,
+                    'Status' : place.status ? 'Active' : 'Inactive',
+                    'Featured' : place.featured ? 'Yes' : 'No',
+                    'Created At': moment(place.createdAt).format('lll'),
+                    'Updated At': moment(place.updatedAt).format('lll'),
                     'Action' : <>
-                        <Link to={`/places/edit/${staff._id}`} className="btn btn-outline-dark btn-sm me-2">
+                        <Link to={`/places/edit/${place._id}`} className="btn btn-outline-dark btn-sm me-2">
                             <i className="fa-solid fa-edit me-2"></i>Edit 
                         </Link>
                         <Button variant="outline-danger" size="sm" onClick={() => handleDelete(staff._id)}>
