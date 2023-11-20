@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { FormItem, Loading, SubmitBtn } from "../../components";
-import { setInForm } from "../../lib";
+import { imgUrl, setInForm } from "../../lib";
 import http from "../../http";
 import { setUser } from "../../store";
 import Switch from "react-switch"
@@ -38,7 +38,7 @@ export const Edit = () => {
     },[])
 
     useEffect(() => {
-        if(Object.key(place).length) {
+        if(Object.keys(place).length) {
             setForm({
                 name: place.name,
                 summary: place.summary,
@@ -109,14 +109,12 @@ export const Edit = () => {
 
     const handleDelete = filename => {
         setLoadingPage(true)
-
         http.delete(`cms/places/${params.id}/image/${filename}`)
             .then(() => http.get(`cms/places/${params.id}`))
             .then(({data}) => setProduct(data))
             .catch(() => {})
             .finally(() => setLoadingPage(false))
-
-    }
+        }
 
     return (
         <Col xs={12} className="bg-white my-3 py-3 rounded-3 shadow-sm">
@@ -194,7 +192,6 @@ export const Edit = () => {
                                         </Col>
                                     </Row>
                                 </Col>
-
                                 )}
                             </Row> : null}
                         </FormItem>
